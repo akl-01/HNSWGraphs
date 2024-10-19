@@ -9,15 +9,13 @@ class DisjointSet:
         representative1 = self.find(vertex1)
         representative2 = self.find(vertex2)
 
-        self._representatives[representative2] = representative1
+        if representative1 != representative2:
+            self._representatives[representative2] = representative1
 
     def find(self, vertex) -> int:
         if self._representatives[vertex] == vertex:
             return vertex
         else:
-            return self.find(self._representatives[vertex])
-    
-    def get_unique_representatives(self, vertexes) -> set:
-        unique_representatives = set()
-        for vertex in vertexes:
-            unique_representatives.add(self.find(vertex))
+            representetive = self.find(self._representatives[vertex])
+            self._representatives[vertex] = representetive
+            return representetive

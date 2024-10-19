@@ -126,7 +126,7 @@ def main():
     for x in tqdm(train_data):
         hnsw.add(x)
 
-    #hnsw.save_graph_plane("save_graph_plane.txt")
+    hnsw.save_graph_plane("save_graph_plane.txt")
 
     num_components = hnsw.get_components()
 

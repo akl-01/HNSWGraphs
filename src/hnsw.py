@@ -6,7 +6,8 @@ import random
 from math import log2
 from heapq import heapify, heappop, heappush, heapreplace, nlargest, nsmallest
 
-from disjoint_set.disjoint_set import DisjointSet
+sys.path.insert(0, '/home/arklykov/work/AnalyseGraphNetwork/GraphComponent')
+from src.disjoint_set.disjoint_set import DisjointSet
 
 def l2_distance(a, b):
     return np.linalg.norm(a - b)
@@ -209,18 +210,19 @@ class HNSW:
         :return num_components: int
         '''
         level_components = {i: set() for i in range(len(self._graphs))}
+        vertexes_size = len(self._graphs[0])
 
         for i, graph in enumerate(self._graphs):
-            disjoint_set = DisjointSet(len(graph.keys()))
+            disjoint_set = DisjointSet(vertexes_size)
             for src in graph.keys():
                 disjoint_set.make_set(src)
 
             for src, neighborhood in graph.items():
-                if disjoint_set.find(src) != disjoint_set.find(neighborhood[0]):
-                    disjoint_set.union(src, neighborhood[0])
+                    for dst, _ in neighborhood:
+                        disjoint_set.union(src, dst)
             
             for src in graph.keys():
-                level_components[i].add(self.find(src))
+                level_components[i].add(disjoint_set.find(src))
         
 
         for i in range(len(self._graphs)):
