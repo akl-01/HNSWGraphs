@@ -60,7 +60,19 @@ def read_ivecs(filename):
             yield vec
 
 def read_fbin(filename):
-    pass
+    with open(filename, "rb") as f:
+        iter = 0
+        # TODO: leave while TRUE
+        while iter < 5000:
+            vec = np.fromfile(f, dtype=np.int32, count=5)
+            iter += 1
+            yield vec
+
+def load_deep1b_dataset():
+    train_file = "base.10M.fbin"
+
+    train_data = np.array(list(read_fbin(train_file)))
+    return train_data
 
 def load_sift_dataset():
     train_file = 'datasets/siftsmall/siftsmall_base.fvecs'
@@ -82,7 +94,7 @@ def generate_synthetic_data(dim, n, nq):
 
 def main():
     parser = argparse.ArgumentParser(description='Test recall of beam search method with KGraph.')
-    parser.add_argument('--dataset', choices=['synthetic', 'sift'], default='synthetic', help="Choose the dataset to use: 'synthetic' or 'sift'.")
+    parser.add_argument('--dataset', choices=['synthetic', 'sift', "deep1b"], default='synthetic', help="Choose the dataset to use: 'synthetic' or 'sift'.")
     parser.add_argument('--K', type=int, default=5, help='The size of the neighbourhood')
     parser.add_argument('--M', type=int, default=50, help='Avg number of neighbors')
     parser.add_argument('--M0', type=int, default=50, help='Avg number of neighbors')
@@ -99,6 +111,9 @@ def main():
     if args.dataset == 'sift':
         print("Loading SIFT dataset...")
         train_data, test_data, groundtruth_data = load_sift_dataset()
+    elif args.dataset == "deep1b":
+        print("Loading deep1b dataset...")
+        train_data = load_deep1b_dataset()
     else:
         print(f"Generating synthetic dataset with {args.dim}-dimensional space...")
         train_data, test_data = generate_synthetic_data(args.dim, args.n, args.nq)
@@ -106,15 +121,19 @@ def main():
 
     # Create HNSW
 
-    hnsw = HNSW( distance_func=l2_distance, m=args.M, m0=args.M0, ef=10, ef_construction=30,  neighborhood_construction = heuristic)
+    hnsw = HNSW( distance_func=l2_distance, m=args.M, m0=args.M0, ef=10, ef_construction=64,  neighborhood_construction = heuristic)
     # Add data to HNSW
     for x in tqdm(train_data):
         hnsw.add(x)
 
+    #hnsw.save_graph_plane("save_graph_plane.txt")
+
+    num_components = hnsw.get_components()
 
     # Calculate recall
-    recall, avg_cal = calculate_recall(l2_distance, hnsw, test_data, groundtruth_data, k=args.k, ef=args.ef, m=args.m)
-    print(f"Average recall: {recall}, avg calc: {avg_cal}")
+    #recall, avg_cal = calculate_recall(l2_distance, hnsw, test_data, groundtruth_data, k=args.k, ef=args.ef, m=args.m)
+    #print(f"Average recall: {recall}, avg calc: {avg_cal}")
+    print(f"Components number: {num_components}")
 
 if __name__ == "__main__":
     sys.exit(main() or 0)

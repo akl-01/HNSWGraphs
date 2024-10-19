@@ -6,6 +6,8 @@ import random
 from math import log2
 from heapq import heapify, heappop, heappush, heapreplace, nlargest, nsmallest
 
+from disjoint_set.disjoint_set import DisjointSet
+
 def l2_distance(a, b):
     return np.linalg.norm(a - b)
 
@@ -185,6 +187,7 @@ class HNSW:
         if return_observed:
             return observed_sorted
         return observed_sorted[:k]
+
     def save_graph_plane(self, file_path):
         with open(file_path, "w") as f:
             f.write(f'{len(self.data)}\n')
@@ -197,6 +200,36 @@ class HNSW:
                 for src, neighborhood in graph.items():
                     for dst, dist in neighborhood: 
                         f.write(f'{src} {dst}\n')
+    
+    def get_components(self) -> int:
+        '''
+        Gets number of hnsw connected components. 
+        The connected components are computed on each layer with disjoint sets
+
+        :return num_components: int
+        '''
+        level_components = {i: set() for i in range(len(self._graphs))}
+
+        for i, graph in enumerate(self._graphs):
+            disjoint_set = DisjointSet(len(graph.keys()))
+            for src in graph.keys():
+                disjoint_set.make_set(src)
+
+            for src, neighborhood in graph.items():
+                if disjoint_set.find(src) != disjoint_set.find(neighborhood[0]):
+                    disjoint_set.union(src, neighborhood[0])
+            
+            for src in graph.keys():
+                level_components[i].add(self.find(src))
+        
+
+        for i in range(len(self._graphs)):
+            print(f"level {i}, representatives = {level_components[i]}")
+            print(f"level {i}, connected components number = {len(level_components[i])}")
+        
+        return max([len(level_components[i]) for i in range(len(self._graphs))])
+
+
 
 
 
