@@ -61,15 +61,12 @@ def read_ivecs(filename):
 
 def read_fbin(filename):
     with open(filename, "rb") as f:
-        iter = 0
-        # TODO: leave while TRUE
-        while iter < 5000:
-            vec = np.fromfile(f, dtype=np.int32, count=5)
-            iter += 1
+        while True:
+            vec = np.fromfile(f, dtype=np.int32, count=100)
             yield vec
 
 def load_deep1b_dataset():
-    train_file = "base.10M.fbin"
+    train_file = "datasets/base.10M.fbin"
 
     train_data = np.array(list(read_fbin(train_file)))
     return train_data
