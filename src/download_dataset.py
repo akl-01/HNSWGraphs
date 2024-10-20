@@ -53,8 +53,8 @@ def download_glove(output_dir):
 
 def download_deep1b(output_dir):
     """Download and extract the DEEP1B dataset"""
-    url = "http://ann-benchmarks.com/deep-image-96-angular.hdf5"
-    output_file = os.path.join(output_dir, "deep-image-96-angular.hdf5")
+    url = "https://storage.yandexcloud.net/yandex-research/ann-datasets/DEEP/base.10M.fbin"
+    output_file = os.path.join(output_dir, "base.10M.fbin")
     download_file(url, output_file)
 
 def download_fasttext(output_dir):
