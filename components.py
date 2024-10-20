@@ -10,6 +10,7 @@ from src.hnsw import HNSW
 from src.hnsw import l2_distance, heuristic
 import sys
 
+from concurrent.futures import ThreadPoolExecutor
 
 def brute_force_knn_search(distance_func, k, q, data):
         '''
@@ -122,8 +123,9 @@ def main():
 
     hnsw = HNSW( distance_func=l2_distance, m=args.M, m0=args.M0, ef=10, ef_construction=64,  neighborhood_construction = heuristic)
     # Add data to HNSW
-    for x in tqdm(train_data):
-        hnsw.add(x)
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        for x in tqdm(train_data):
+            executor.submit(hnsw.add, x)
 
     hnsw.save_graph_plane("save_graph_plane.txt")
 
