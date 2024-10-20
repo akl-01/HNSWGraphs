@@ -120,23 +120,16 @@ def main():
         groundtruth_data = None
 
     # Create HNSW
-
     hnsw = HNSW( distance_func=l2_distance, m=args.M, m0=args.M0, ef=10, ef_construction=64,  neighborhood_construction = heuristic)
     # Add data to HNSW
-    with ThreadPoolExecutor(max_workers=5) as executor:
+    with ThreadPoolExecutor(max_workers=10) as executor:
         for x in tqdm(train_data):
             executor.submit(hnsw.add, x)
 
-    #print("Start graph saving")
-    #hnsw.save_graph_plane("save_graph_plane.txt")
+        print("Start components compute")
+        num_components = hnsw.get_components()
 
-    print("Start components compute")
-    num_components = hnsw.get_components()
-
-    # Calculate recall
-    #recall, avg_cal = calculate_recall(l2_distance, hnsw, test_data, groundtruth_data, k=args.k, ef=args.ef, m=args.m)
-    #print(f"Average recall: {recall}, avg calc: {avg_cal}")
-    print(f"Components number: {num_components}")
+        print(f"Components number: {num_components}")
 
 if __name__ == "__main__":
     sys.exit(main() or 0)

@@ -1,6 +1,6 @@
 class DisjointSet:
     def __init__(self, vertexes_len) -> None:
-        self._representatives = [-1] * vertexes_len
+        self._representatives = [-1] * 10000000
     
     def make_set(self, vertex) -> None:
             self._representatives[vertex] = vertex
