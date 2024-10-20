@@ -123,12 +123,14 @@ def main():
 
     hnsw = HNSW( distance_func=l2_distance, m=args.M, m0=args.M0, ef=10, ef_construction=64,  neighborhood_construction = heuristic)
     # Add data to HNSW
-    with ThreadPoolExecutor(max_workers=10) as executor:
+    with ThreadPoolExecutor(max_workers=5) as executor:
         for x in tqdm(train_data):
             executor.submit(hnsw.add, x)
 
-    hnsw.save_graph_plane("save_graph_plane.txt")
+    #print("Start graph saving")
+    #hnsw.save_graph_plane("save_graph_plane.txt")
 
+    print("Start components compute")
     num_components = hnsw.get_components()
 
     # Calculate recall
