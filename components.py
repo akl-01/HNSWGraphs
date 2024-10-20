@@ -122,9 +122,13 @@ def main():
     # Create HNSW
     hnsw = HNSW( distance_func=l2_distance, m=args.M, m0=args.M0, ef=10, ef_construction=64,  neighborhood_construction = heuristic)
     # Add data to HNSW
-    with ThreadPoolExecutor(max_workers=10) as executor:
-        for x in tqdm(train_data):
-            executor.submit(hnsw.add, x)
+    def work(i):
+        for x in tqdm(train_data[i : i + 1000000]):
+            hnsw.add(x)
+
+    with ThreadPoolExecutor(max_workers=20) as executor:
+        for i in range(0, 10000000, 1000000):
+            executor.submit(work, i)
 
         print("Start components compute")
         num_components = hnsw.get_components()
