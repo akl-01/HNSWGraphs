@@ -126,14 +126,14 @@ def main():
         for x in tqdm(train_data[i : i + 1000000]):
             hnsw.add(x)
 
-    with ThreadPoolExecutor(max_workers=20) as executor:
+    with ThreadPoolExecutor(max_workers=10) as executor:
         for i in range(0, 10000000, 1000000):
             executor.submit(work, i)
 
-        print("Start components compute")
-        num_components = hnsw.get_components()
+    print("Start components compute")
+    num_components = hnsw.get_components()
 
-        print(f"Components number: {num_components}")
+    print(f"Components number: {num_components}")
 
 if __name__ == "__main__":
     sys.exit(main() or 0)
