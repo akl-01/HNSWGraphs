@@ -1,6 +1,6 @@
 # Investigation of a HNSW graphs
 
-The implementations of [hnsw.py](./src/hnsw.py) and other pieces of codes were borrowed from the [repository](https://github.com/aponom84/navigable-graphs-python/tree/main). The connected com=mponents are fiund by using disjoint set. The used dataset could be downloaded by [link](https://research.yandex.com/blog/benchmarks-for-billion-scale-similarity-search#14h2).
+The implementations of [hnsw.py](./src/hnsw.py) and other pieces of codes were borrowed from the [repository](https://github.com/aponom84/navigable-graphs-python/tree/main). The connected components are found by using disjoint set. The used dataset could be downloaded by [link](https://research.yandex.com/blog/benchmarks-for-billion-scale-similarity-search#14h2).
 
 # Prerequisites
 > python3.12 is used
